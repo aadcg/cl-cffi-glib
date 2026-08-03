@@ -44,8 +44,6 @@
 
 (in-package :glib)
 
-;; TODO: Consider to export the macros for handling GError instances.
-
 (define-gboxed-opaque error "GError"
   :export t
   :type-initializer "g_error_get_type"
@@ -120,32 +118,35 @@
             :reader gerror-condition-message))
   (:report (lambda (err stream)
              (format stream
-                     "GError: Domain: ~s, Code: ~s, Message: ~a"
+                     "GError:~@
+                      Domain:  ~s~@
+                      Code:    ~s~@
+                      Message: ~a"
                      (gerror-condition-domain err)
                      (gerror-condition-code err)
-                     (gerror-condition-message err)))))
+                     (gerror-condition-message err))))
+  (:documentation "Signaled to report recoverable runtime errors."))
 
 (defun maybe-raise-gerror-condition (err)
   (unless (cffi:null-pointer-p err)
     (cffi:with-foreign-slots ((%domain %code %message) err (:struct %error))
-      (cl:error 'gerror-condition
-                :domain %domain
-                :code %code
-                :message %message))))
+      (cl:cerror "Ignore GError."
+                 'gerror-condition
+                 :domain %domain
+                 :code %code
+                 :message %message))))
 
 (defmacro with-error ((err) &body body)
   `(cffi:with-foreign-object (,err :pointer)
      (setf (cffi:mem-ref ,err :pointer) (cffi:null-pointer))
-     (unwind-protect
-       (progn ,@body)
+     (unwind-protect (progn ,@body)
        (maybe-raise-gerror-condition (cffi:mem-ref ,err :pointer))
        (%clear-error ,err))))
 
 (defmacro with-ignore-error ((err) &body body)
   `(cffi:with-foreign-object (,err :pointer)
      (setf (cffi:mem-ref ,err :pointer) (cffi:null-pointer))
-     (unwind-protect
-       (progn ,@body)
+     (unwind-protect (progn ,@body)
        (%clear-error ,err))))
 
 ;;; ----------------------------------------------------------------------------

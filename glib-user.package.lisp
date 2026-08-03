@@ -47,6 +47,7 @@
 
            ;; Symbols from glib.error.lisp
            #:error                               ; FIXME: g:error not accessible
+           #:gerror-condition
            #:with-error
            #:with-ignore-error
            #:with-catching-to-error

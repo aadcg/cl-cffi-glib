@@ -62,6 +62,7 @@
            #:type-initializer-call
            ;; Symbols from glib.error.lisp
            #:error
+           #:gerror-condition
            #:with-error
            #:with-ignore-error
            #:with-catching-to-error))
