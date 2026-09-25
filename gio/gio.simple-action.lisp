@@ -83,10 +83,10 @@
     "enabled" "gboolean" t t)
    (name
     simple-action-name
-    "name" "gchararray" t nil)
+    "name" "gchararray" t t)
    (parameter-type
     simple-action-parameter-type
-    "parameter-type" "GVariantType" t nil)
+    "parameter-type" "GVariantType" t t)
    (state
     simple-action-state
     "state" "GVariant" t t)
