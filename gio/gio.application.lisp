@@ -1337,7 +1337,7 @@ lambda (application)    :run-first
   (nfiles :int)
   (hint :string))
 
-(defun application-open (application files &optional (hint ""))
+(defun application-open (application files &key (hint "") (fn #'file-new-for-uri))
  #+liber-documentation
  "@version{2025-06-22}
   @argument[application]{a @class{g:application} instance}
@@ -1363,7 +1363,7 @@ lambda (application)    :run-first
     (cffi:with-foreign-object (files-ptr :pointer nfiles)
       (iter (for i from 0 below nfiles)
             (for file in files)
-            (for file-ptr = (gobject:object-pointer (file-new-for-path file)))
+            (for file-ptr = (gobject:object-pointer (funcall fn file)))
             (setf (cffi:mem-aref files-ptr :pointer i) file-ptr))
       (%application-open application files-ptr nfiles hint))))
 
